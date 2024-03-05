@@ -4,7 +4,12 @@ import * as THREE from "three";
 export default class TestObject extends kokomi.Component {
     constructor(base) {
       super(base);
-  
+
+      const params = {
+        uDistort: {
+          value: 1,
+        },
+      };
       const geometry = new THREE.SphereGeometry(2, 64, 64);
       // const geometry = new THREE.PlaneGeometry(4, 4);
       const material = new THREE.ShaderMaterial({
@@ -167,7 +172,19 @@ vUv=uv;
       material.uniforms = {
         ...material.uniforms,
         ...uj.shadertoyUniforms,
+        ...params,
       };
+      const debug = this.base.debug;
+      if (debug.active) {
+        const debugFolder = debug.ui.addFolder("testObject");
+        debugFolder
+        .add(params.uDistort, "value")
+        .min(0)
+        .max(2)
+        .step(0.01)
+        .name("distort");
+      }
+
       this.base.update(() => {
         uj.injectShadertoyUniforms(material.uniforms);
       });
